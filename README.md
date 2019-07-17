@@ -44,9 +44,9 @@
 ```bash
 <script type="text/javascript" src="./jquery.js"></script> 
 <script type="text/javascript" src="./jquery-migrate-1.2.1.js"></script> 
-<script type="text/javascript" src="./TableFreeze.js"></script> <br/>
-<script type='text/javascript'> <br/>
-    $(document).ready(function(){ <br/>
+<script type="text/javascript" src="./TableFreeze.js"></script>  
+<script type='text/javascript'> 
+    $(document).ready(function(){  
         // rowHead, rowFoot, colLeft, colRight 分别对应需要冻结的表格首行，尾行，首列和尾列 
         var rowHead = 1, rowFoot = 1, colLeft = 2, colRight = 2; 
         $("#someId").tablesortFrozenTable(rowHead, rowFoot, colLeft, colRight); 
