@@ -20,7 +20,95 @@
 ** 修改记录:增加冻结右侧列的功能+兼容
 **
 ** 描述:支持冻结函数传入第4个参数，用于冻结尾列;兼容ie下宽度和高度显示的问题
+**
+** 修改人：Zhanghuang
+**
+** 修改时间:2019-07-15
+**
+** 修改记录:增加兼容tableSort
+**
+** 描述:增加兼容tableSort
+**        使用这个的时候，首先表头的列不能是 th  要用td，
+**        这个插件需要在最后去调用，否则会缺少加载一些css，并且还会影响其他的插件
+**      目前测试兼容： IE11 谷歌
 **********************************/
+
+$.fn.tablesortFrozenTable =function(iRowHead,iRowFoot,iColLeft,iColRight){
+    let sorttable = $(this);
+    let tabledefaultId="dataTable_xdata";
+    if(undefined == sorttable.attr('id')){
+        sorttable.attr('id',tabledefaultId);
+    }
+    //冻结表头 
+    sorttable.FrozenTable(iRowHead,iRowFoot,iColLeft,iColRight);
+    
+    let tableid= sorttable.attr('id');
+    if( ! $("#"+tableid).parent().is('div')){
+        alert("table的父级元素必须为div");
+        return;
+    }
+    
+    let tabParentDivDefaultId="dataTableDiv_xdata"
+    if(undefined == $("#"+tableid).parent().attr('id')){
+        $("#"+tableid).parent().attr('id',tabParentDivDefaultId);
+    }
+    
+    let tabParentDivId=$("#"+tableid).parent().attr('id');
+     var newtop=0;
+     if(undefined !=$("#oDivH_"+tableid).css("top")){
+          newtop = $("#oDivH_"+tableid).css("top").split("px")[0] - 0 ;
+     }
+    let frozendivml = $("#"+tabParentDivId).offset().left;
+    /*if(!!window.ActiveXObject || "ActiveXObject" in window) 
+    { //判断是IE
+    }*/
+    $("#oDivH_"+tableid).css({
+        "top" : newtop + "px",
+        "left": frozendivml+ "px",
+        "width" : $("#"+tabParentDivId).width() + "px",
+        //在这里发现y原来的表的表头的高度对新的div的高度一直 不够。所以加了15。
+        "height" : $("#"+tabParentDivId+" table thead").height()+15+ "px"
+    });
+    
+     let tb0= $("#oDivH_"+tableid ).find("table")[0];
+     tb0.style.borderColor="#555";
+     tb0.style.borderStyle="solid";
+     tb0.style.borderWidth="2px";
+     
+    
+    let $oDivH_dataTable = $("#oDivH_"+tableid);
+    let clsPrefix = "frozentablehead_head_temp";
+    for (var i = 0; i < $oDivH_dataTable.find('tbody td').length; i++) {
+        //var oldClassName = $oDivH_dataTable.find('tbody td')[i].className;
+        $oDivH_dataTable.find('tbody td')[i].className =clsPrefix + i; 
+        
+        /* if(sorttable.find('thead td')[i].id == ""){
+            sorttable.find('thead td')[i].id=new Date().getTime();
+        }
+        var theadTDID =sorttable.find('thead td')[i].id;
+        console.log($("#"+theadTDID).offset().left +"       "+$("." + clsPrefix + i).offset().left);*/
+        
+        /******颜色根据项目整体的主题色进行配置，这个也可以提出去作为参数******/
+        $("." + clsPrefix + i).css({
+            "text-align" : "center",
+            "background-color" : "#072951",
+             "border":"2px solid #555"
+                 
+        });
+        //$("." + clsPrefix + i).width($('#'+tableid).find('thead td:eq(' + i + ')').width());
+    }
+    
+    $("#oDivH_"+tableid).fadeOut(0);
+    $("#"+tabParentDivId).scroll(function() {
+        if ($("#"+tabParentDivId).scrollTop() - 0 != 0) {
+            $("#oDivH_"+tableid).fadeIn(0);
+        } else {
+            $("#oDivH_"+tableid).fadeOut(0);
+        }
+    }); 
+}
+
+
 $.fn.mergeAttributes = function(src){
 	if($.browser.msie) {
 		$(this).get(0).mergeAttributes(src.get(0));
